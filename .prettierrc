@@ -1,0 +1,14 @@
+{
+    "singleQuote": false,
+    "trailingComma": "none",
+    "tabWidth": 4,
+    "importOrder": [
+        "^[^./]",
+        "^[./]"
+    ],
+    "importOrderParserPlugins": ["typescript", "decorators-legacy"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "printWidth": 150,
+    "endOfLine": "lf"
+}

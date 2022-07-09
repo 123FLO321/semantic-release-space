@@ -1,0 +1,62 @@
+{
+  "name": "semantic-release-space",
+  "version": "0.0.0",
+  "description": "A Semantic Release JetBrains Space plugin",
+  "author": "Florian Kostenzer (https://github.com/123FLO321)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/123FLO321/semantic-release-space.git"
+  },
+  "bugs": {
+    "url": "https://github.com/123FLO321/semantic-release-space/issues"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint \"{src,test}/**/*{.js,.ts,.json}\"",
+    "lint:fix": "eslint \"{src,test}/**/*{.js,.ts,.json}\" --fix",
+    "prepublish": "tsc",
+    "postinstall": "husky install || true"
+  },
+  "keywords": [
+    "jetbrains",
+    "space",
+    "jetbrains-space",
+    "semantic-release",
+    "plugin",
+    "semantic-release-plugin"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-angular": "^17.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.5",
+    "@semantic-release/npm": "^9.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+    "@types/semantic-release": "^17.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "semantic-release": "^19.0.3",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --fix"
+    ],
+    "**/*.ts": [
+      "eslint --fix"
+    ]
+  }
+}
