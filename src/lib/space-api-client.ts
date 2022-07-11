@@ -113,12 +113,12 @@ export class SpaceApiClient {
                 version: context.nextRelease?.version,
                 description: context.nextRelease?.notes,
                 commitRefs:
-                    context.nextRelease?.version && this.options.branch && this.options.repositoryName
+                    context.nextRelease?.gitHead && this.options.branch && this.options.repositoryName
                         ? [
                               {
                                   repositoryName: this.options.repositoryName,
                                   branch: this.options.branch,
-                                  commit: `v${context.nextRelease.version}`
+                                  commit: context.nextRelease.gitHead
                               }
                           ]
                         : undefined
