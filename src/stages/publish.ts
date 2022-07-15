@@ -1,4 +1,5 @@
-import { SpaceApiClient } from "../lib/space-api-client";
+import { getSpaceApi } from "../lib/get-space-api";
+import { startDeployment } from "../lib/start-deployment";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
@@ -12,8 +13,8 @@ import { PluginContext } from "../types/plugin-context";
 export async function publish(pluginConfig: PluginConfig, context: PluginContext): Promise<void> {
     try {
         validatePluginConfig(pluginConfig, context);
-        const client = new SpaceApiClient(pluginConfig);
-        await client.startDeployment(context);
+        const client = getSpaceApi(pluginConfig);
+        await startDeployment(client, pluginConfig, context);
     } catch (error) {
         context.logger.error("Failed to start deployment", (error as Error).message);
         throw error;

@@ -1,4 +1,5 @@
-import { SpaceApiClient } from "../lib/space-api-client";
+import { createDeploymentTargetIfNeeded } from "../lib/create-deployment-target-if-needed";
+import { getSpaceApi } from "../lib/get-space-api";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
@@ -12,8 +13,8 @@ import { PluginContext } from "../types/plugin-context";
 export async function prepare(pluginConfig: PluginConfig, context: PluginContext): Promise<void> {
     try {
         validatePluginConfig(pluginConfig, context);
-        const client = new SpaceApiClient(pluginConfig);
-        await client.createDeploymentTargetIfNotExists();
+        const client = getSpaceApi(pluginConfig);
+        await createDeploymentTargetIfNeeded(client, pluginConfig);
     } catch (error) {
         context.logger.error("Failed to prepare deployment", (error as Error).message);
         throw error;

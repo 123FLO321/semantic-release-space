@@ -1,4 +1,5 @@
-import { SpaceApiClient } from "../lib/space-api-client";
+import { failDeployment } from "../lib/fail-deployment";
+import { getSpaceApi } from "../lib/get-space-api";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
@@ -12,8 +13,8 @@ import { PluginContext } from "../types/plugin-context";
 export async function fail(pluginConfig: PluginConfig, context: PluginContext): Promise<void> {
     try {
         validatePluginConfig(pluginConfig, context);
-        const client = new SpaceApiClient(pluginConfig);
-        await client.failDeployment(context);
+        const client = getSpaceApi(pluginConfig);
+        await failDeployment(client, pluginConfig, context);
     } catch (error) {
         context.logger.error("Failed to mark deployment as failed", (error as Error).message);
         throw error;
