@@ -1,6 +1,6 @@
 # semantic-release-space
 
-[**semantic-release**](https://github.com/123FLO321/semantic-release-space) plugin to publish a
+[**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to publish a
 [JetBrains Space Deployment](https://www.jetbrains.com/help/space/deployments.html).
 
 [![npm latest version](https://img.shields.io/npm/v/semantic-release-space/latest.svg)](https://www.npmjs.com/package/semantic-release-space)
