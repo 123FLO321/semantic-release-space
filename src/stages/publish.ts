@@ -1,4 +1,5 @@
 import { getSpaceApi } from "../lib/get-space-api";
+import { handleError } from "../lib/handle-error";
 import { startDeployment } from "../lib/start-deployment";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
 import { PluginConfig } from "../types/plugin-config";
@@ -16,7 +17,6 @@ export async function publish(pluginConfig: PluginConfig, context: PluginContext
         const client = getSpaceApi(pluginConfig);
         await startDeployment(client, pluginConfig, context);
     } catch (error) {
-        context.logger.error("Failed to start deployment", (error as Error).message);
-        throw error;
+        handleError("Failed to start deployment", error);
     }
 }

@@ -1,4 +1,5 @@
 import { getSpaceApi } from "../lib/get-space-api";
+import { handleError } from "../lib/handle-error";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
 import { verifySpaceApi } from "../lib/verify-space-api";
 import { PluginConfig } from "../types/plugin-config";
@@ -17,7 +18,6 @@ export async function verifyConditions(pluginConfig: PluginConfig, context: Plug
         const client = getSpaceApi(pluginConfig);
         await verifySpaceApi(client, pluginConfig);
     } catch (error) {
-        context.logger.error("Failed to verify plugin configuration", (error as Error).message);
-        throw error;
+        handleError("Failed to verify plugin configuration", error);
     }
 }

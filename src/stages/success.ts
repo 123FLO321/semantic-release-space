@@ -1,5 +1,6 @@
 import { finishDeployment } from "../lib/finish-deployment";
 import { getSpaceApi } from "../lib/get-space-api";
+import { handleError } from "../lib/handle-error";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
@@ -16,7 +17,6 @@ export async function success(pluginConfig: PluginConfig, context: PluginContext
         const client = getSpaceApi(pluginConfig);
         await finishDeployment(client, pluginConfig, context);
     } catch (error) {
-        context.logger.error("Failed to mark deployment as finished", (error as Error).message);
-        throw error;
+        handleError("Failed to mark deployment as finished", error);
     }
 }
