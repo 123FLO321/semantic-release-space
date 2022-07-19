@@ -26,7 +26,7 @@ export function validatePluginConfig(pluginConfig: Partial<PluginConfig>, contex
  * @param context The plugin context.
  * @throws {Error} If a required configuration option is missing.
  */
-function verifyApiToken(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
+export function verifyApiToken(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
     if (!pluginConfig.apiToken) {
         pluginConfig.apiToken = context.env.JB_SPACE_CLIENT_TOKEN;
     }
@@ -41,7 +41,7 @@ function verifyApiToken(pluginConfig: Partial<PluginConfig>, context: PluginCont
  * @param context The plugin context.
  * @throws {Error} If a required configuration option is missing.
  */
-function verifyApiUrl(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
+export function verifyApiUrl(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
     if (!pluginConfig.apiUrl) {
         pluginConfig.apiUrl = context.env.JB_SPACE_API_URL;
     }
@@ -56,7 +56,7 @@ function verifyApiUrl(pluginConfig: Partial<PluginConfig>, context: PluginContex
  * @param context The plugin context.
  * @throws {Error} If a required configuration option is missing.
  */
-function verifyProjectId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
+export function verifyProjectId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
     if (!pluginConfig.projectId) {
         pluginConfig.projectId = context.env.JB_SPACE_PROJECT_ID;
     }
@@ -71,7 +71,7 @@ function verifyProjectId(pluginConfig: Partial<PluginConfig>, context: PluginCon
  * @param context The plugin context.
  * @throws {Error} If a required configuration option is missing.
  */
-function verifyTargetId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
+export function verifyTargetId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
     if (!pluginConfig.targetId) {
         pluginConfig.targetId = context.env.JB_SPACE_TARGET_ID;
     }
@@ -85,11 +85,11 @@ function verifyTargetId(pluginConfig: Partial<PluginConfig>, context: PluginCont
  * @param pluginConfig
  * @param context
  */
-function setCommitInfo(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
+export function setCommitInfo(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
     if (!pluginConfig.repositoryName) {
         pluginConfig.repositoryName = context.env.JB_SPACE_GIT_REPOSITORY_NAME;
     }
     if (!pluginConfig.branch) {
-        pluginConfig.branch = context.branch?.name ?? context.env.JB_SPACE_GIT_BRANCH;
+        pluginConfig.branch = context.branch?.name || context.env.JB_SPACE_GIT_BRANCH;
     }
 }
