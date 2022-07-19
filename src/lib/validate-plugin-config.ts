@@ -90,6 +90,6 @@ function setCommitInfo(pluginConfig: Partial<PluginConfig>, context: PluginConte
         pluginConfig.repositoryName = context.env.JB_SPACE_GIT_REPOSITORY_NAME;
     }
     if (!pluginConfig.branch) {
-        pluginConfig.branch = context.branch?.name ?? context.env.JB_SPACE_GIT_BRANCH;
+        pluginConfig.branch = context.branch?.name || context.env.JB_SPACE_GIT_BRANCH;
     }
 }
