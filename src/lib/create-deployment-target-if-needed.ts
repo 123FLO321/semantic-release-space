@@ -11,7 +11,7 @@ import { PluginConfig } from "../types/plugin-config";
  */
 export async function createDeploymentTargetIfNeeded(client: SpaceApi, pluginConfig: PluginConfig): Promise<void> {
     try {
-        await client.projectsProjectAutomationDeploymentTargetsGet(pluginConfig.projectId, pluginConfig.targetId);
+        await client.projectsProjectAutomationDeploymentTargetsIdentifierGet(pluginConfig.projectId, `key:${pluginConfig.targetId}`);
     } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 404) {
             await client.projectsProjectAutomationDeploymentTargetsPost(pluginConfig.projectId, {
