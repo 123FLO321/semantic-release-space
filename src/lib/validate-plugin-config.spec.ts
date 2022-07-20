@@ -85,8 +85,23 @@ function getContext(env: { [key: string]: string } = {}, branchName = "main"): P
             name: branchName
         },
         logger: {
+            await: jest.fn(),
+            complete: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
+            fatal: jest.fn(),
+            fav: jest.fn(),
+            info: jest.fn(),
             log: jest.fn(),
-            error: jest.fn()
+            note: jest.fn(),
+            pause: jest.fn(),
+            pending: jest.fn(),
+            star: jest.fn(),
+            start: jest.fn(),
+            success: jest.fn(),
+            wait: jest.fn(),
+            warn: jest.fn(),
+            watch: jest.fn()
         }
     };
 }
