@@ -5,17 +5,19 @@ import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
 
 /**
- * Gets the post data for a deployment request from the given config and context.
+ * Gets the post data for a deployment request from the given config and context and target id.
  * @param pluginConfig
  * @param context
+ * @param targetId
  */
 export function getDeploymentRequestPostData(
     pluginConfig: PluginConfig,
-    context: PluginContext
+    context: PluginContext,
+    targetId: string
 ): Pick<ProjectsProjectAutomationDeploymentsStartPostRequest, "targetIdentifier" | "version" | "description" | "commitRefs"> {
     return {
         // cast needed until https://github.com/OpenAPITools/openapi-generator/issues/12432 is resolved
-        targetIdentifier: pluginConfig.targetId as unknown as TargetIdentifier,
+        targetIdentifier: targetId as unknown as TargetIdentifier,
         version: context.nextRelease?.version,
         description: context.nextRelease?.notes,
         commitRefs:

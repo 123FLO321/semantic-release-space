@@ -1,4 +1,4 @@
-import { createDeploymentTargetIfNeeded } from "../lib/create-deployment-target-if-needed";
+import { createDeploymentTargetsIfNeeded } from "../lib/create-deployment-targets-if-needed";
 import { getSpaceApi } from "../lib/get-space-api";
 import { handleError } from "../lib/handle-error";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
@@ -15,7 +15,7 @@ export async function prepare(pluginConfig: PluginConfig, context: PluginContext
     try {
         validatePluginConfig(pluginConfig, context);
         const client = getSpaceApi(pluginConfig);
-        await createDeploymentTargetIfNeeded(client, pluginConfig);
+        await createDeploymentTargetsIfNeeded(client, pluginConfig, context);
     } catch (error) {
         handleError("Failed to prepare deployment", error);
     }

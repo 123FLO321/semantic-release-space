@@ -16,7 +16,7 @@ export async function verifyConditions(pluginConfig: PluginConfig, context: Plug
     try {
         validatePluginConfig(pluginConfig, context);
         const client = getSpaceApi(pluginConfig);
-        await verifySpaceApi(client, pluginConfig);
+        await verifySpaceApi(client, pluginConfig, context);
     } catch (error) {
         handleError("Failed to verify plugin configuration", error);
     }
