@@ -1,5 +1,6 @@
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
+import { toBoolean } from "./to-boolean";
 
 /**
  * Fills and validates the plugin configuration.
@@ -12,11 +13,12 @@ import { PluginContext } from "../types/plugin-context";
  * @throws {Error} If a required configuration option is missing.
  */
 export function validatePluginConfig(pluginConfig: Partial<PluginConfig>, context: PluginContext): PluginConfig {
+    context.logger.info("Validating plugin configuration");
+    setCommitInfo(pluginConfig, context);
     verifyApiToken(pluginConfig, context);
     verifyApiUrl(pluginConfig, context);
     verifyProjectId(pluginConfig, context);
     verifyTargetId(pluginConfig, context);
-    setCommitInfo(pluginConfig, context);
     return pluginConfig as PluginConfig;
 }
 
@@ -66,17 +68,39 @@ export function verifyProjectId(pluginConfig: Partial<PluginConfig>, context: Pl
 }
 
 /**
- * Verifies that the plugin configuration has a target id.
+ * Parses the target configuration into current target ids.
+ * Verifies that at least on target id is present, unless require target is false.
  * @param pluginConfig The plugin configuration to fill and validate.
  * @param context The plugin context.
  * @throws {Error} If a required configuration option is missing.
  */
 export function verifyTargetId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
-    if (!pluginConfig.targetId) {
-        pluginConfig.targetId = context.env.JB_SPACE_TARGET_ID;
+    if (Array.isArray(pluginConfig.target)) {
+        pluginConfig.currentTargetIds = pluginConfig.target;
+    } else if (typeof pluginConfig.target === "string") {
+        pluginConfig.currentTargetIds = [pluginConfig.target];
+    } else if (typeof pluginConfig.target === "object") {
+        const branchTarget = pluginConfig.target[pluginConfig.branch ?? ""];
+        if (Array.isArray(branchTarget)) {
+            pluginConfig.currentTargetIds = branchTarget;
+        } else {
+            pluginConfig.currentTargetIds = [branchTarget];
+        }
+    } else if (typeof pluginConfig.targetId === "string") {
+        pluginConfig.currentTargetIds = [pluginConfig.targetId];
+    } else if (context.env.JB_SPACE_TARGET_ID) {
+        pluginConfig.currentTargetIds = context.env.JB_SPACE_TARGET_ID.split(",");
     }
-    if (!pluginConfig.targetId) {
-        throw new Error("Missing target id. Please either set the 'targetId' plugin option, or set the JB_SPACE_TARGET_ID environment variable.");
+    pluginConfig.currentTargetIds = pluginConfig.currentTargetIds?.filter((id) => id) ?? [];
+
+    if (pluginConfig.requireTarget == null) {
+        pluginConfig.requireTarget = context.env.JB_SPACE_REQUIRE_TARGET ? toBoolean(context.env.JB_SPACE_REQUIRE_TARGET) : true;
+    }
+
+    if (!pluginConfig.currentTargetIds || !pluginConfig.currentTargetIds.length) {
+        if (pluginConfig.requireTarget) {
+            throw new Error("Missing target id. Please either set the 'target' plugin option, or set the JB_SPACE_TARGET_ID environment variable.");
+        }
     }
 }
 

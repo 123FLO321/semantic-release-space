@@ -1,4 +1,4 @@
-import { failDeployment } from "../lib/fail-deployment";
+import { failDeployments } from "../lib/fail-deployments";
 import { getSpaceApi } from "../lib/get-space-api";
 import { handleError } from "../lib/handle-error";
 import { validatePluginConfig } from "../lib/validate-plugin-config";
@@ -15,7 +15,7 @@ export async function fail(pluginConfig: PluginConfig, context: PluginContext): 
     try {
         validatePluginConfig(pluginConfig, context);
         const client = getSpaceApi(pluginConfig);
-        await failDeployment(client, pluginConfig, context);
+        await failDeployments(client, pluginConfig, context);
     } catch (error) {
         handleError("Failed to mark deployment as failed", error);
     }

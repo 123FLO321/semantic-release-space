@@ -54,18 +54,61 @@ describe("validate-plugin-config", () => {
         expect(() => verifyTargetId({}, getContext())).toThrow();
     });
 
-    it("should set the target id from config", () => {
+    it("should not throw an error if the target id is set and require target is false by config", () => {
+        expect(() => verifyTargetId({ requireTarget: false }, getContext())).not.toThrow();
+    });
+
+    it("should not throw an error if the target id is set and require target is false by environment", () => {
+        expect(() => verifyTargetId({}, getContext({ JB_SPACE_REQUIRE_TARGET: "false" }))).not.toThrow();
+    });
+
+    it("should set single target id from deprecated config", () => {
         const config = getConfig({ targetId: "example" });
         const context = getContext();
         expect(() => verifyTargetId(config, context)).not.toThrow();
-        expect(config.targetId).toEqual("example");
+        expect(config.currentTargetIds).toEqual(["example"]);
     });
 
-    it("should set the target id from environment", () => {
+    it("should set single target id from config", () => {
+        const config = getConfig({ target: "example" });
+        const context = getContext();
+        expect(() => verifyTargetId(config, context)).not.toThrow();
+        expect(config.currentTargetIds).toEqual(["example"]);
+    });
+
+    it("should set single target id from environment", () => {
         const config = getConfig();
         const context = getContext({ JB_SPACE_TARGET_ID: "example" });
         expect(() => verifyTargetId(config, context)).not.toThrow();
-        expect(config.targetId).toEqual("example");
+        expect(config.currentTargetIds).toEqual(["example"]);
+    });
+
+    it("should set multiple target ids from config", () => {
+        const config = getConfig({ target: ["example", "other"] });
+        const context = getContext();
+        expect(() => verifyTargetId(config, context)).not.toThrow();
+        expect(config.currentTargetIds).toEqual(["example", "other"]);
+    });
+
+    it("should set multiple target ids from environment", () => {
+        const config = getConfig();
+        const context = getContext({ JB_SPACE_TARGET_ID: "example,other" });
+        expect(() => verifyTargetId(config, context)).not.toThrow();
+        expect(config.currentTargetIds).toEqual(["example", "other"]);
+    });
+
+    it("should set single target id from branch config", () => {
+        const config = getConfig({ branch: "main", target: { main: "example" } });
+        const context = getContext();
+        expect(() => verifyTargetId(config, context)).not.toThrow();
+        expect(config.currentTargetIds).toEqual(["example"]);
+    });
+
+    it("should set multiple target ids from branch config", () => {
+        const config = getConfig({ branch: "main", target: { main: ["example", "other"] } });
+        const context = getContext();
+        expect(() => verifyTargetId(config, context)).not.toThrow();
+        expect(config.currentTargetIds).toEqual(["example", "other"]);
     });
 
     it("should set the commit info from environment", () => {
