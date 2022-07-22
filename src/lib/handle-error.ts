@@ -12,9 +12,9 @@ export function handleError(description: string, error: unknown): never {
     let stack: string | undefined;
     if (error instanceof AxiosError) {
         errorMessage = `Space API request failed with status ${error.response?.status ?? "?"}`;
-        if (error.response && "error_description" in error.response.data) {
+        if (typeof error.response?.data === "object" && "error_description" in error.response.data) {
             errorMessage += `: ${error.response.data["error_description"]}`;
-        } else if (error.response && "statusText" in error.response) {
+        } else if (typeof error.response?.data === "object" && "statusText" in error.response) {
             errorMessage += `: ${error.response["statusText"]}`;
         }
         stack = error.stack;
