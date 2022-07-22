@@ -19,6 +19,7 @@ export function validatePluginConfig(pluginConfig: Partial<PluginConfig>, contex
     verifyApiUrl(pluginConfig, context);
     verifyProjectId(pluginConfig, context);
     verifyTargetId(pluginConfig, context);
+    verifyJobId(pluginConfig, context);
     return pluginConfig as PluginConfig;
 }
 
@@ -101,6 +102,37 @@ export function verifyTargetId(pluginConfig: Partial<PluginConfig>, context: Plu
         if (pluginConfig.requireTarget) {
             throw new Error("Missing target id. Please either set the 'target' plugin option, or set the JB_SPACE_TARGET_ID environment variable.");
         }
+    }
+}
+
+/**
+ * Parses the job configuration into current job ids.
+ * @param pluginConfig The plugin configuration to fill and validate.
+ * @param context The plugin context.
+ * @throws {Error} If a required configuration option is missing.
+ */
+export function verifyJobId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
+    if (Array.isArray(pluginConfig.job)) {
+        pluginConfig.currentJobIds = pluginConfig.job;
+    } else if (typeof pluginConfig.job === "string") {
+        pluginConfig.currentJobIds = [pluginConfig.job];
+    } else if (typeof pluginConfig.job === "object") {
+        const branchTarget = pluginConfig.job[pluginConfig.branch ?? ""];
+        if (Array.isArray(branchTarget)) {
+            pluginConfig.currentJobIds = branchTarget;
+        } else {
+            pluginConfig.currentJobIds = [branchTarget];
+        }
+    } else if (context.env.JB_SPACE_JOB_ID) {
+        pluginConfig.currentJobIds = context.env.JB_SPACE_JOB_ID.split(",");
+    }
+    pluginConfig.currentJobIds = pluginConfig.currentJobIds?.filter((id) => id) ?? [];
+
+    if (!pluginConfig.jobTimeout) {
+        pluginConfig.jobTimeout = Number(context.env.JB_SPACE_JOB_TIMEOUT) || 3600;
+    }
+    if (!pluginConfig.jobCheckInterval) {
+        pluginConfig.jobCheckInterval = Number(context.env.JB_SPACE_JOB_CHECK_INTERVAL) || 10;
     }
 }
 

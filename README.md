@@ -46,17 +46,21 @@ All other options are automatically set via their environment variables in a Spa
 
 ### Options and Environment variables
 
-| Option           | Environment variable                        | Type                  | Description                                                                                                                    |
-|------------------|---------------------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `target`         | `JB_SPACE_TARGET_ID`                        | `TargetConfiguration` | **Required**<br/>The Space deployment target(s)<br>Set to an key value object to specify target(s) per branch.                 |
-| `projectId`      | `JB_SPACE_PROJECT_ID`                       | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The Space project id                                              |
-| `apiUrl`         | `JB_SPACE_API_URL`                          | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The Space API url                                                 |
-| `apiToken`       | `JB_SPACE_TOKEN`<br>`JB_SPACE_CLIENT_TOKEN` | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The Space API auth token                                          |
-| `repositoryName` | `JB_SPACE_GIT_REPOSITORY_NAME`              | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The repositories name                                             |
-| `requireTarget`  | `JB_SPACE_REQUIRE_TARGET`                   | `boolean`             | *Defaults to true*<br/>If set to false an invalid or missing target configuration will be ignored instead of throwing an error |
+| Option             | Environment variable                        | Type                  | Description                                                                                                                    |
+|--------------------|---------------------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| `target`           | `JB_SPACE_TARGET_ID`                        | `TargetConfiguration` | **Required**<br/>The Space deployment target(s)<br>Set to an key value object to specify target(s) per branch                  |
+| `projectId`        | `JB_SPACE_PROJECT_ID`                       | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The Space project id                                              |
+| `apiUrl`           | `JB_SPACE_API_URL`                          | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The Space API url                                                 |
+| `apiToken`         | `JB_SPACE_TOKEN`<br>`JB_SPACE_CLIENT_TOKEN` | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The Space API auth token                                          |
+| `repositoryName`   | `JB_SPACE_GIT_REPOSITORY_NAME`              | `string`              | **Required** *Automatically set in JetBrains Space Jobs*<br/>The repositories name                                             |
+| `requireTarget`    | `JB_SPACE_REQUIRE_TARGET`                   | `boolean`             | *Defaults to true*<br/>If set to false an invalid or missing target configuration will be ignored instead of throwing an error |
+| `job`              | `JB_SPACE_JOB_ID`                           | `JobConfiguration`    | *Defaults to []*<br>The Space automation job(s) to start<br/>Set to an key value object to specify job(s) per branch           |
+| `jobTimeout`       | `JB_SPACE_JOB_TIMEOUT`                      | `number`              | *Defaults to 3600*<br/>The max timeout waiting for jobs to complete in seconds                                                 |
+| `jobCheckInterval` | `JB_SPACE_JOB_CHECK_INTERVAL`               | `number`              | *Defaults to 10*<br/>The interval between job status checks in seconds                                                         |
 
 #### Option Types
 - TargetConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
+- JobConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
 
 ## Job Example
 
