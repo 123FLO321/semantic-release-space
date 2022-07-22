@@ -14,9 +14,16 @@ describe("validate-plugin-config", () => {
         expect(config.apiToken).toEqual("xxx");
     });
 
-    it("should set the api token from environment", () => {
+    it("should set the api token from client token environment", () => {
         const config = getConfig();
         const context = getContext({ JB_SPACE_CLIENT_TOKEN: "xxx" });
+        expect(() => verifyApiToken(config, context)).not.toThrow();
+        expect(config.apiToken).toEqual("xxx");
+    });
+
+    it("should set api token from token over client token environment", () => {
+        const config = getConfig();
+        const context = getContext({ JB_SPACE_TOKEN: "xxx", JB_SPACE_CLIENT_TOKEN: "yyy" });
         expect(() => verifyApiToken(config, context)).not.toThrow();
         expect(config.apiToken).toEqual("xxx");
     });

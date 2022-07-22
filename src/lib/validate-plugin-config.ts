@@ -30,7 +30,7 @@ export function validatePluginConfig(pluginConfig: Partial<PluginConfig>, contex
  */
 export function verifyApiToken(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
     if (!pluginConfig.apiToken) {
-        pluginConfig.apiToken = context.env.JB_SPACE_CLIENT_TOKEN;
+        pluginConfig.apiToken = context.env.JB_SPACE_TOKEN || context.env.JB_SPACE_CLIENT_TOKEN;
     }
     if (!pluginConfig.apiToken) {
         throw new Error("Missing token. Please either set the 'apiToken' plugin option, or set the JB_SPACE_CLIENT_TOKEN environment variable.");
