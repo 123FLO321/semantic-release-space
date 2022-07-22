@@ -17,7 +17,7 @@
     "lint:fix": "eslint \"{src,test}/**/*{.js,.ts,.json}\" --fix",
     "test": "jest",
     "prepublish": "tsc",
-    "postinstall": "husky install || true"
+    "prepare": "husky install"
   },
   "keywords": [
     "jetbrains",
