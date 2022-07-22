@@ -10,7 +10,7 @@ export function getSpaceApi(pluginConfig: Partial<PluginConfig>): SpaceApi {
     return new SpaceApi(
         new Configuration({
             basePath: `${pluginConfig.apiUrl}/api/http`,
-            accessToken: pluginConfig.apiToken
+            accessToken: pluginConfig.apiToken?.split(":").pop()
         })
     );
 }

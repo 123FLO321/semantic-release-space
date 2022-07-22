@@ -1,6 +1,6 @@
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
-import { setCommitInfo, verifyApiToken, verifyApiUrl, verifyProjectId, verifyTargetId } from "./validate-plugin-config";
+import { setCommitInfo, verifyApiToken, verifyApiUrl, verifyJobId, verifyProjectId, verifyTargetId } from "./validate-plugin-config";
 
 describe("validate-plugin-config", () => {
     it("should throw an error if the api token is not set", () => {
@@ -14,9 +14,16 @@ describe("validate-plugin-config", () => {
         expect(config.apiToken).toEqual("xxx");
     });
 
-    it("should set the api token from environment", () => {
+    it("should set the api token from client token environment", () => {
         const config = getConfig();
         const context = getContext({ JB_SPACE_CLIENT_TOKEN: "xxx" });
+        expect(() => verifyApiToken(config, context)).not.toThrow();
+        expect(config.apiToken).toEqual("xxx");
+    });
+
+    it("should set api token from token over client token environment", () => {
+        const config = getConfig();
+        const context = getContext({ JB_SPACE_TOKEN: "xxx", JB_SPACE_CLIENT_TOKEN: "yyy" });
         expect(() => verifyApiToken(config, context)).not.toThrow();
         expect(config.apiToken).toEqual("xxx");
     });
@@ -109,6 +116,52 @@ describe("validate-plugin-config", () => {
         const context = getContext();
         expect(() => verifyTargetId(config, context)).not.toThrow();
         expect(config.currentTargetIds).toEqual(["example", "other"]);
+    });
+
+    it("should not throw an error if no job config is set", () => {
+        expect(() => verifyJobId({}, getContext())).not.toThrow();
+    });
+
+    it("should set single job id from config", () => {
+        const config = getConfig({ job: "example" });
+        const context = getContext();
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual(["example"]);
+    });
+
+    it("should set single job id from environment", () => {
+        const config = getConfig();
+        const context = getContext({ JB_SPACE_JOB_ID: "example" });
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual(["example"]);
+    });
+
+    it("should set multiple job ids from config", () => {
+        const config = getConfig({ job: ["example", "other"] });
+        const context = getContext();
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual(["example", "other"]);
+    });
+
+    it("should set multiple job ids from environment", () => {
+        const config = getConfig();
+        const context = getContext({ JB_SPACE_JOB_ID: "example,other" });
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual(["example", "other"]);
+    });
+
+    it("should set single job id from branch config", () => {
+        const config = getConfig({ branch: "main", job: { main: "example" } });
+        const context = getContext();
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual(["example"]);
+    });
+
+    it("should set multiple job ids from branch config", () => {
+        const config = getConfig({ branch: "main", job: { main: ["example", "other"] } });
+        const context = getContext();
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual(["example", "other"]);
     });
 
     it("should set the commit info from environment", () => {
