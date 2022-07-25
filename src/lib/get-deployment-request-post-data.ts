@@ -17,7 +17,7 @@ export function getDeploymentRequestPostData(
 ): Pick<ProjectsProjectAutomationDeploymentsStartPostRequest, "targetIdentifier" | "version" | "description" | "commitRefs"> {
     return {
         // cast needed until https://github.com/OpenAPITools/openapi-generator/issues/12432 is resolved
-        targetIdentifier: targetId as unknown as TargetIdentifier,
+        targetIdentifier: targetId.toLowerCase() as unknown as TargetIdentifier,
         version: context.nextRelease?.version,
         description: context.nextRelease?.notes,
         commitRefs:
