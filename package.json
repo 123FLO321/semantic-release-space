@@ -1,6 +1,6 @@
 {
   "name": "semantic-release-space",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A Semantic Release JetBrains Space plugin",
   "author": "Florian Kostenzer (https://github.com/123FLO321)",
   "repository": {
