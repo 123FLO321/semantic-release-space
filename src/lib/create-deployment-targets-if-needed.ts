@@ -15,7 +15,7 @@ export async function createDeploymentTargetsIfNeeded(client: SpaceApi, pluginCo
     for (const targetId of pluginConfig.currentTargetIds) {
         try {
             context.logger.info(`Checking if deployment target '${targetId}' exists`);
-            await client.projectsProjectAutomationDeploymentTargetsIdentifierGet(pluginConfig.projectId, `key:${targetId.toLowerCase()}`);
+            await client.projectsProjectAutomationDeploymentTargetsGet(pluginConfig.projectId, `key:${targetId.toLowerCase()}`);
         } catch (error) {
             if (error instanceof AxiosError && error.response?.status === 404) {
                 context.logger.info(`Creating deployment target '${targetId}'`);
