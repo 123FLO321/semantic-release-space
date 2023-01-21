@@ -135,7 +135,7 @@ job("Verify") {
     shellScript {
       content = """
         npm install
-        npx semantic-release --ci=false
+        npx semantic-release
       """
     }
   }
