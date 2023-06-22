@@ -116,7 +116,7 @@ export function verifyJobId(pluginConfig: Partial<PluginConfig>, context: Plugin
     if (Array.isArray(pluginConfig.job) || typeof pluginConfig.job === "string") {
         pluginConfig.currentJobIds = parseJobBranchConfigurationOptions(pluginConfig.job);
     } else if (typeof pluginConfig.job === "object") {
-        const branchTarget = (pluginConfig.job as { [branch: string]: JobBranchConfiguration })[pluginConfig.branch ?? ""];
+        const branchTarget = (pluginConfig.job as { [branch: string]: JobBranchConfiguration })[pluginConfig.branch ?? ""] ?? [pluginConfig.job];
         pluginConfig.currentJobIds = parseJobBranchConfigurationOptions(branchTarget);
     } else if (context.env.JB_SPACE_JOB_ID) {
         pluginConfig.currentJobIds = parseJobBranchConfigurationOptions(context.env.JB_SPACE_JOB_ID.split(","));
