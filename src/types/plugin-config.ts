@@ -1,4 +1,4 @@
-import { JobConfiguration } from "./job-configuration";
+import { JobConfiguration, JobConfigurationOptions } from "./job-configuration";
 import { TargetConfiguration } from "./target-configuration";
 
 /**
@@ -25,7 +25,7 @@ export interface PluginConfig {
     /** The job configuration. */
     job?: JobConfiguration;
     /** @internal The current deployment target ids. Use `target` instead. */
-    currentJobIds: string[];
+    currentJobIds: JobConfigurationOptions[];
     /** The timeout in seconds waiting for the job to complete. */
     jobTimeout: number;
     /** The wait time in seconds between each job status check. */

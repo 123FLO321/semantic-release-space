@@ -60,7 +60,24 @@ All other options are automatically set via their environment variables in a Spa
 
 #### Option Types
 - TargetConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
-- JobConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
+- JobConfiguration: `JobBranchConfiguration | { [branch: string]: JobBranchConfiguration }`
+- JobBranchConfiguration: `string | string[] | { id: string, params?: { [name: string]: string } }`
+
+### Default Job Parameters
+| Key                 | Description                                                                          |
+|---------------------|--------------------------------------------------------------------------------------|
+| `release-type`      | The semver type of the release.                                                      |
+| `release-channel`   | The release channel of the release.                                                  |
+| `release-git-head`  | The git hash of the release.                                                         |
+| `release-git-tag`   | The version with v prefix.                                                           |
+| `release-version`   | The release version.                                                                 |
+| `release-name`      | The release name.                                                                    |
+| `release-notes`     | The release notes of the next release.                                               |
+| `branch-name`       | The name of git branch.                                                              |
+| `branch-channel`    | The distribution channel on which to publish releases from this branch.              |
+| `branch-range`      | The range of semantic versions to support on this branch.                            |
+| `branch-prerelease` | The pre-release identifier to append to semantic versions released from this branch. |
+
 
 ## Job Example
 
@@ -102,7 +119,13 @@ of the new tag will be published on the `example-target` deployment target.
     [
       "semantic-release-space",
       {
-        "targetId": "example-target"
+        "targetId": "example-target",
+        "job": {
+          "id": "Example",
+          "params": {
+            "example-param": "example-value"
+          }
+        }
       }
     ],
     [
@@ -124,7 +147,7 @@ of the new tag will be published on the `example-target` deployment target.
 
 ### .space.kts
 ```kotlin
-job("Verify") {
+job("Release") {
   git {
     refSpec = "refs/heads/main"
   }
@@ -139,5 +162,23 @@ job("Verify") {
       """
     }
   }
+}
+
+job("Example") {
+  parameters {       
+    text("release-version")
+    text("example-param")
+  }
+
+  startOn {}
+
+  container(image = "alpine:lts") {
+    shellScript {
+      content = """
+        echo {{ release-version }}
+        echo {{ example-param }}
+      """
+    }
+  }  
 }
 ```
