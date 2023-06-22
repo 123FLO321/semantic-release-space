@@ -126,42 +126,70 @@ describe("validate-plugin-config", () => {
         const config = getConfig({ job: "example" });
         const context = getContext();
         expect(() => verifyJobId(config, context)).not.toThrow();
-        expect(config.currentJobIds).toEqual(["example"]);
+        expect(config.currentJobIds).toEqual([{ id: "example" }]);
     });
 
     it("should set single job id from environment", () => {
         const config = getConfig();
         const context = getContext({ JB_SPACE_JOB_ID: "example" });
         expect(() => verifyJobId(config, context)).not.toThrow();
-        expect(config.currentJobIds).toEqual(["example"]);
+        expect(config.currentJobIds).toEqual([{ id: "example" }]);
     });
 
     it("should set multiple job ids from config", () => {
         const config = getConfig({ job: ["example", "other"] });
         const context = getContext();
         expect(() => verifyJobId(config, context)).not.toThrow();
-        expect(config.currentJobIds).toEqual(["example", "other"]);
+        expect(config.currentJobIds).toEqual([{ id: "example" }, { id: "other" }]);
     });
 
     it("should set multiple job ids from environment", () => {
         const config = getConfig();
         const context = getContext({ JB_SPACE_JOB_ID: "example,other" });
         expect(() => verifyJobId(config, context)).not.toThrow();
-        expect(config.currentJobIds).toEqual(["example", "other"]);
+        expect(config.currentJobIds).toEqual([{ id: "example" }, { id: "other" }]);
     });
 
     it("should set single job id from branch config", () => {
         const config = getConfig({ branch: "main", job: { main: "example" } });
         const context = getContext();
         expect(() => verifyJobId(config, context)).not.toThrow();
-        expect(config.currentJobIds).toEqual(["example"]);
+        expect(config.currentJobIds).toEqual([{ id: "example" }]);
     });
 
     it("should set multiple job ids from branch config", () => {
         const config = getConfig({ branch: "main", job: { main: ["example", "other"] } });
         const context = getContext();
         expect(() => verifyJobId(config, context)).not.toThrow();
-        expect(config.currentJobIds).toEqual(["example", "other"]);
+        expect(config.currentJobIds).toEqual([{ id: "example" }, { id: "other" }]);
+    });
+
+    it("should set single job with parameters from config", () => {
+        const config = getConfig({
+            branch: "main",
+            job: { id: "example", parameters: { example1: "hello", example2: "world" } }
+        });
+        const context = getContext();
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual([{ id: "example", parameters: { example1: "hello", example2: "world" } }]);
+    });
+
+    it("should set multiple jobs with parameters from branch config", () => {
+        const config = getConfig({
+            branch: "main",
+            job: {
+                main: [
+                    { id: "example", parameters: { example1: "hello", example2: "world" } },
+                    { id: "other", parameters: {} }
+                ]
+            }
+        });
+        const context = getContext();
+        expect(() => verifyJobId(config, context)).not.toThrow();
+        expect(config.currentJobIds).toEqual([
+            { id: "example", parameters: { example1: "hello", example2: "world" } },
+            { id: "other", parameters: {} }
+        ]);
     });
 
     it("should set the commit info from environment", () => {
