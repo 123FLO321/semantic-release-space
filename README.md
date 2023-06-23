@@ -61,7 +61,7 @@ All other options are automatically set via their environment variables in a Spa
 #### Option Types
 - TargetConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
 - JobConfiguration: `JobBranchConfiguration | { [branch: string]: JobBranchConfiguration }`
-- JobBranchConfiguration: `string | string[] | { id: string, params?: { [name: string]: string } }`
+- JobBranchConfiguration: `string | string[] | { id: string, parameters?: { [name: string]: string } }`
 
 ### Default Job Parameters
 | Key                 | Description                                                                          |
@@ -122,7 +122,7 @@ of the new tag will be published on the `example-target` deployment target.
         "targetId": "example-target",
         "job": {
           "id": "Example",
-          "params": {
+          "parameters": {
             "example-param": "example-value"
           }
         }
