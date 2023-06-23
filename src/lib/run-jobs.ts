@@ -33,7 +33,7 @@ export async function runJobs(client: SpaceApi, pluginConfig: PluginConfig, cont
             })
         ).data;
         if (!startedJob.executionId) {
-            throw new Error(startedJob.message ? `Job '${jobId}' failed: ${startedJob.message}` : `Job '${jobId}' failed`);
+            throw new Error(startedJob.message ? `Job '${job.name}' failed: ${startedJob.message}` : `Job '${jobId}' failed`);
         }
         startedJobs.push({ executionId: startedJob.executionId, name: job.name });
     }
