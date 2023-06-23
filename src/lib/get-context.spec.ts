@@ -1,5 +1,12 @@
 import { PluginContext } from "../types/plugin-context";
 
+describe("get-context", () => {
+    it("should return a context", () => {
+        const context = getContext();
+        expect(context).toBeDefined();
+    });
+});
+
 export function getContext(env: { [key: string]: string } = {}, branchName = "main"): PluginContext {
     return {
         env,
