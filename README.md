@@ -39,6 +39,7 @@ The plugin can be configured in the [**semantic-release** configuration file](ht
 
 With this example a [JetBrains Space Deployment](https://www.jetbrains.com/help/space/deployments.html) will be published on the `example-target` deployment target .
 
+
 ## Configuration
 
 Make sure to set `targetId` or `JB_SPACE_TARGET_ID` to the deployment target you want to use.
@@ -60,7 +61,19 @@ All other options are automatically set via their environment variables in a Spa
 
 #### Option Types
 - TargetConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
-- JobConfiguration: `string | string[] | { [branch: string]: string | string[] }` 
+- JobConfiguration: `JobBranchConfiguration | { [branch: string]: JobBranchConfiguration }`
+- JobBranchConfiguration: `string | string[] | { id: string, parameters?: { [name: string]: string } }`
+
+#### Job Parameters
+
+Job parameters can be set via the `parameters` property of a job configuration for all or only specific branches.
+The values will be parsed using [Handlebars](https://handlebarsjs.com/) and with the [plugin context](https://semantic-release.gitbook.io/semantic-release/developer-guide/plugin#context) as template context.
+Examples:
+ - `"parameters": { "hello": "world" }` will set the parameter `hello` to `world`
+ - `"parameters": { "version": "{{nextRelease.version}}" }` will set the parameter `version` to the next release version
+ - `"parameters": { "channel": "{{#if nextRelease.channel}}{{nextRelease.channel}}{{else}}latest{{/if}}" }` will set the parameter `channel` to the next release channel or `latest` if no channel is set
+
+
 
 ## Job Example
 
@@ -102,7 +115,15 @@ of the new tag will be published on the `example-target` deployment target.
     [
       "semantic-release-space",
       {
-        "targetId": "example-target"
+        "targetId": "example-target",
+        "job": {
+          "id": "Example",
+          "parameters": {
+            "example-param": "example-value",
+            "release-version": "{{nextRelease.version}}",
+            "release-channel": "{{#if nextRelease.channel}}{{nextRelease.channel}}{{else}}latest{{/if}}"
+          }
+        }
       }
     ],
     [
@@ -124,7 +145,7 @@ of the new tag will be published on the `example-target` deployment target.
 
 ### .space.kts
 ```kotlin
-job("Verify") {
+job("Release") {
   git {
     refSpec = "refs/heads/main"
   }
@@ -139,5 +160,25 @@ job("Verify") {
       """
     }
   }
+}
+
+job("Example") {
+  parameters {       
+    text("release-version")
+    text("release-channel")
+    text("example-param")
+  }
+
+  startOn {}
+
+  container(image = "alpine:lts") {
+    shellScript {
+      content = """
+        echo {{ release-version }}
+        echo {{ release-channel }}
+        echo {{ example-param }}
+      """
+    }
+  }  
 }
 ```

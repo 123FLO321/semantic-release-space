@@ -2,6 +2,7 @@ import { SpaceApi } from "jetbrains-space-api";
 
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
+import { buildJobParameters } from "./build-job-parameters";
 
 /**
  * Starts jobs for the given context and waits for them to finish.
@@ -21,16 +22,20 @@ export async function runJobs(client: SpaceApi, pluginConfig: PluginConfig, cont
     const start = Date.now();
     const startedJobs: { executionId: string; name: string }[] = [];
     for (const jobId of pluginConfig.currentJobIds) {
-        const job = allJobs.find((j) => j.name.toLowerCase() === jobId.toLowerCase() || j.id === jobId);
+        const job = allJobs.find((j) => j.name.toLowerCase() === jobId.id?.toLowerCase() || j.id === jobId.id);
         if (!job) {
             throw new Error(`Job '${jobId}' not found`);
         }
         context.logger.info(`Starting job '${job.name}'`);
         const startedJob = (
             await client.projectsProjectAutomationJobsJobIdStartPost(pluginConfig.projectId, job.id, {
-                branch: { branchName: pluginConfig.branch }
+                branch: { branchName: pluginConfig.branch },
+                parameters: buildJobParameters(jobId.parameters ?? {}, context)
             })
         ).data;
+        if (!startedJob.executionId) {
+            throw new Error(startedJob.message ? `Job '${job.name}' failed: ${startedJob.message}` : `Job '${jobId}' failed`);
+        }
         startedJobs.push({ executionId: startedJob.executionId, name: job.name });
     }
 
@@ -38,7 +43,6 @@ export async function runJobs(client: SpaceApi, pluginConfig: PluginConfig, cont
     while (Date.now() - start < pluginConfig.jobTimeout * 1000 && startedJobs.length > 0) {
         for (const startedJob of startedJobs) {
             const jobState = (await client.projectsAutomationGraphExecutionsIdGet(startedJob.executionId)).data;
-            jobState.status;
             if (jobState.status === "FAILED") {
                 throw new Error(`Job '${startedJob.name}' failed`);
             } else if (jobState.status === "TERMINATED") {

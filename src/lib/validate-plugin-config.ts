@@ -1,3 +1,4 @@
+import { JobBranchConfiguration, JobConfigurationOptions } from "../types/job-configuration";
 import { PluginConfig } from "../types/plugin-config";
 import { PluginContext } from "../types/plugin-context";
 import { toBoolean } from "./to-boolean";
@@ -112,21 +113,15 @@ export function verifyTargetId(pluginConfig: Partial<PluginConfig>, context: Plu
  * @throws {Error} If a required configuration option is missing.
  */
 export function verifyJobId(pluginConfig: Partial<PluginConfig>, context: PluginContext): void {
-    if (Array.isArray(pluginConfig.job)) {
-        pluginConfig.currentJobIds = pluginConfig.job;
-    } else if (typeof pluginConfig.job === "string") {
-        pluginConfig.currentJobIds = [pluginConfig.job];
+    if (Array.isArray(pluginConfig.job) || typeof pluginConfig.job === "string") {
+        pluginConfig.currentJobIds = parseJobBranchConfigurationOptions(pluginConfig.job);
     } else if (typeof pluginConfig.job === "object") {
-        const branchTarget = pluginConfig.job[pluginConfig.branch ?? ""];
-        if (Array.isArray(branchTarget)) {
-            pluginConfig.currentJobIds = branchTarget;
-        } else {
-            pluginConfig.currentJobIds = [branchTarget];
-        }
+        const branchTarget = (pluginConfig.job as { [branch: string]: JobBranchConfiguration })[pluginConfig.branch ?? ""] ?? [pluginConfig.job];
+        pluginConfig.currentJobIds = parseJobBranchConfigurationOptions(branchTarget);
     } else if (context.env.JB_SPACE_JOB_ID) {
-        pluginConfig.currentJobIds = context.env.JB_SPACE_JOB_ID.split(",");
+        pluginConfig.currentJobIds = parseJobBranchConfigurationOptions(context.env.JB_SPACE_JOB_ID.split(","));
     }
-    pluginConfig.currentJobIds = pluginConfig.currentJobIds?.filter((id) => id) ?? [];
+    pluginConfig.currentJobIds = pluginConfig.currentJobIds?.filter((id) => id?.id) ?? [];
 
     if (!pluginConfig.jobTimeout) {
         pluginConfig.jobTimeout = Number(context.env.JB_SPACE_JOB_TIMEOUT) || 3600;
@@ -134,6 +129,22 @@ export function verifyJobId(pluginConfig: Partial<PluginConfig>, context: Plugin
     if (!pluginConfig.jobCheckInterval) {
         pluginConfig.jobCheckInterval = Number(context.env.JB_SPACE_JOB_CHECK_INTERVAL) || 10;
     }
+}
+
+/**
+ * Parses the job branch configuration into job configuration options.
+ * @param jobConfig The job configuration to parse.
+ */
+function parseJobBranchConfigurationOptions(jobConfig: JobBranchConfiguration): JobConfigurationOptions[] {
+    const options: JobConfigurationOptions[] = [];
+    for (const config of Array.isArray(jobConfig) ? jobConfig : [jobConfig]) {
+        if (typeof config === "string") {
+            options.push({ id: config });
+        } else if (typeof config === "object") {
+            options.push({ id: config.id, parameters: config.parameters });
+        }
+    }
+    return options;
 }
 
 /**
