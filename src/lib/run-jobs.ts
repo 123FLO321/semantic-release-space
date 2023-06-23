@@ -32,6 +32,9 @@ export async function runJobs(client: SpaceApi, pluginConfig: PluginConfig, cont
                 parameters: buildJobParameters(jobId.parameters ?? {}, context)
             })
         ).data;
+        if (!startedJob.executionId) {
+            throw new Error(startedJob.message ? `Job '${jobId}' failed: ${startedJob.message}` : `Job '${jobId}' failed`);
+        }
         startedJobs.push({ executionId: startedJob.executionId, name: job.name });
     }
 
@@ -39,7 +42,6 @@ export async function runJobs(client: SpaceApi, pluginConfig: PluginConfig, cont
     while (Date.now() - start < pluginConfig.jobTimeout * 1000 && startedJobs.length > 0) {
         for (const startedJob of startedJobs) {
             const jobState = (await client.projectsAutomationGraphExecutionsIdGet(startedJob.executionId)).data;
-            jobState.status;
             if (jobState.status === "FAILED") {
                 throw new Error(`Job '${startedJob.name}' failed`);
             } else if (jobState.status === "TERMINATED") {
