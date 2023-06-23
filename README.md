@@ -39,6 +39,7 @@ The plugin can be configured in the [**semantic-release** configuration file](ht
 
 With this example a [JetBrains Space Deployment](https://www.jetbrains.com/help/space/deployments.html) will be published on the `example-target` deployment target .
 
+
 ## Configuration
 
 Make sure to set `targetId` or `JB_SPACE_TARGET_ID` to the deployment target you want to use.
@@ -63,20 +64,15 @@ All other options are automatically set via their environment variables in a Spa
 - JobConfiguration: `JobBranchConfiguration | { [branch: string]: JobBranchConfiguration }`
 - JobBranchConfiguration: `string | string[] | { id: string, parameters?: { [name: string]: string } }`
 
-### Default Job Parameters
-| Key                 | Description                                                                          |
-|---------------------|--------------------------------------------------------------------------------------|
-| `release-type`      | The semver type of the release.                                                      |
-| `release-channel`   | The release channel of the release.                                                  |
-| `release-git-head`  | The git hash of the release.                                                         |
-| `release-git-tag`   | The version with v prefix.                                                           |
-| `release-version`   | The release version.                                                                 |
-| `release-name`      | The release name.                                                                    |
-| `release-notes`     | The release notes of the next release.                                               |
-| `branch-name`       | The name of git branch.                                                              |
-| `branch-channel`    | The distribution channel on which to publish releases from this branch.              |
-| `branch-range`      | The range of semantic versions to support on this branch.                            |
-| `branch-prerelease` | The pre-release identifier to append to semantic versions released from this branch. |
+#### Job Parameters
+
+Job parameters can be set via the `parameters` property of a job configuration for all or only specific branches.
+The values will be parsed using [Handlebars](https://handlebarsjs.com/) and with the [plugin context](https://semantic-release.gitbook.io/semantic-release/developer-guide/plugin#context) as template context.
+Examples:
+ - `"parameters": { "hello": "world" }` will set the parameter `hello` to `world`
+ - `"parameters": { "version": "{{nextRelease.version}}" }` will set the parameter `version` to the next release version
+ - `"parameters": { "channel": "{{#if nextRelease.channel}}{{nextRelease.channel}}{{else}}latest{{/if}}" }` will set the parameter `channel` to the next release channel or `latest` if no channel is set
+
 
 
 ## Job Example
@@ -123,7 +119,9 @@ of the new tag will be published on the `example-target` deployment target.
         "job": {
           "id": "Example",
           "parameters": {
-            "example-param": "example-value"
+            "example-param": "example-value",
+            "release-version": "{{nextRelease.version}}",
+            "release-channel": "{{#if nextRelease.channel}}{{nextRelease.channel}}{{else}}latest{{/if}}"
           }
         }
       }
@@ -167,6 +165,7 @@ job("Release") {
 job("Example") {
   parameters {       
     text("release-version")
+    text("release-channel")
     text("example-param")
   }
 
@@ -176,6 +175,7 @@ job("Example") {
     shellScript {
       content = """
         echo {{ release-version }}
+        echo {{ release-channel }}
         echo {{ example-param }}
       """
     }

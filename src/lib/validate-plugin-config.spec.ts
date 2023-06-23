@@ -1,5 +1,5 @@
-import { PluginConfig } from "../types/plugin-config";
-import { PluginContext } from "../types/plugin-context";
+import { getConfig } from "./get-config.spec";
+import { getContext } from "./get-context.spec";
 import { setCommitInfo, verifyApiToken, verifyApiUrl, verifyJobId, verifyProjectId, verifyTargetId } from "./validate-plugin-config";
 
 describe("validate-plugin-config", () => {
@@ -200,36 +200,3 @@ describe("validate-plugin-config", () => {
         expect(config.repositoryName).toEqual("EXAMPLE");
     });
 });
-
-function getContext(env: { [key: string]: string } = {}, branchName = "main"): PluginContext {
-    return {
-        env,
-        commits: [],
-        branch: {
-            name: branchName
-        },
-        logger: {
-            await: jest.fn(),
-            complete: jest.fn(),
-            debug: jest.fn(),
-            error: jest.fn(),
-            fatal: jest.fn(),
-            fav: jest.fn(),
-            info: jest.fn(),
-            log: jest.fn(),
-            note: jest.fn(),
-            pause: jest.fn(),
-            pending: jest.fn(),
-            star: jest.fn(),
-            start: jest.fn(),
-            success: jest.fn(),
-            wait: jest.fn(),
-            warn: jest.fn(),
-            watch: jest.fn()
-        }
-    };
-}
-
-function getConfig(config: Partial<PluginConfig> = {}): Partial<PluginConfig> {
-    return config;
-}
